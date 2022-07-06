@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import Node from './Node'
+
+import './Pathfinder.css'
 
 class Pathfinder extends Component {
 
@@ -9,10 +12,10 @@ class Pathfinder extends Component {
         };
     }
 
-    //create the grid as soon as this component is inserted into the DOM & update state
+    //create the grid as soon as this component is inserted into the DOM & update state.grid (which is initially an empty array)
     componentDidMount(){
-        const newGrid = this.createGrid(15, 15);
-        this.setState({grid: newGrid})
+        const newGrid = this.createGrid(25, 50);
+        this.setState({grid: newGrid}, () => console.log(this.state.grid))
     }
 
     //create 2D array/grid of Nodes
@@ -42,8 +45,22 @@ class Pathfinder extends Component {
     }
 
     render() {
+        const grid = this.state.grid;
+
         return (
-        <div>Pathfinder</div>
+            <div className = "grid">
+                {grid.map((row, rowIdx) => {
+                    return (
+                        <div key={rowIdx}>
+                            {row.map((node, nodeIdx) => {
+                                return (
+                                    <Node key={nodeIdx} row={row} col={nodeIdx}/>
+                                )
+                            })}
+                        </div>
+                    );
+                })}
+            </div>
         )
     }
 }
