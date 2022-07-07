@@ -4,3 +4,11 @@
     outline: 1px solid rgb(90, 136, 169);
     /* display: inline-block; */
   }
+
+.startPoint {
+  background-color: lightgreen;
+}
+
+.endPoint {
+  background-color: firebrick;
+}
