@@ -7,10 +7,10 @@ import "./Pathfinder.css";
 const rows = 25;
 const cols = 40;
 
-const START_ROW = 5;
-const START_COL = 5;
-const END_ROW = 23;
-const END_COL = 37;
+const START_ROW = 15;
+const START_COL = 20;
+const END_ROW = 19;
+const END_COL = 27;
 
 class Pathfinder extends Component {
   constructor() {
@@ -44,6 +44,7 @@ class Pathfinder extends Component {
     return grid;
   };
 
+  //create Object for each cell in our grid
   createCell = (row, col) => {
     return {
       row: row,
@@ -58,13 +59,7 @@ class Pathfinder extends Component {
   };
 
   visualizeAlgorithm() {
-    const grid = [];
-    for (let row of this.state.grid) {
-      const curRow = row.map((a) => {
-        return { ...a };
-      });
-      grid.push(curRow);
-    }
+    const grid = this.deepCopyGrid();
 
     const startNode = grid[START_ROW][START_COL];
     const endNode = grid[END_ROW][END_COL];
@@ -75,7 +70,42 @@ class Pathfinder extends Component {
     //Nodes in the shortest path for Dijkstra
     const nodesInShortestPath = shortestPath(endNode);
 
-    this.setState({ grid: grid }, () => console.log(this.state.grid));
+    //animate all these Nodes
+    this.animateAlgorithm(visitedNodes, nodesInShortestPath);
+  }
+
+  //simulate animation effect by updating state one cell at a time every couple of milliseconds
+  animateAlgorithm = async (visitedNodes, nodesInShortestPath) => {
+    const delay = (ms) =>
+      new Promise((resolve, reject) => setTimeout(resolve, ms));
+
+    for (let node of visitedNodes) {
+      const grid = this.deepCopyGrid();
+      grid[node.row][node.col] = node;
+      this.setState({ grid: grid });
+      await delay(10);
+    }
+
+    console.log(nodesInShortestPath);
+    for (let node of nodesInShortestPath) {
+      const grid = this.deepCopyGrid();
+      grid[node.row][node.col] = { ...node, inShortestPath: true };
+      this.setState({ grid: grid });
+      await delay(10);
+    }
+    return;
+  };
+
+  //deep copy of grid state before we perform updates on it.
+  deepCopyGrid() {
+    const grid = [];
+    for (let row of this.state.grid) {
+      const curRow = row.map((a) => {
+        return { ...a };
+      });
+      grid.push(curRow);
+    }
+    return grid;
   }
 
   render() {

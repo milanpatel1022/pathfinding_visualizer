@@ -30,6 +30,7 @@ export function dijkstra(grid, startNode, endNode) {
 
     //if curNode is the endNode, we can exit early. we know the shortest path to it.
     if (curNode === endNode) {
+      curNode.isVisited = true;
       visitedNodes.push(curNode);
       return visitedNodes;
     }
@@ -91,7 +92,7 @@ export function shortestPath(endNode) {
   let curNode = endNode;
 
   while (curNode !== null) {
-    curNode.inShortestPath = true; //mark Node as being in shortest path
+    // curNode.inShortestPath = true; //mark Node as being in shortest path
     path.unshift(curNode); //unshift pushes to front of array, so our path will be in order
     curNode = curNode.prevNode;
   }
