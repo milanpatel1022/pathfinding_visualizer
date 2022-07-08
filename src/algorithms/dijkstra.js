@@ -14,88 +14,87 @@ Algorithm
 
 */
 
-export function dijkstra(grid, startNode, endNode){
-    const visitedNodes = [];
-    const unvisitedNodes = getUnvisitedNodes(grid)
+export function dijkstra(grid, startNode, endNode) {
+  const visitedNodes = [];
+  const unvisitedNodes = getUnvisitedNodes(grid);
 
-    startNode.distance = 0; //Dijkstra starts from this Node
-    
-    //while we still have unvisited Nodes
-    while (unvisitedNodes.length !== 0){
+  startNode.distance = 0; //Dijkstra starts from this Node
 
-        //sort Nodes by distance from start
-        sortUnvisitedNodes(unvisitedNodes)
+  //while we still have unvisited Nodes
+  while (unvisitedNodes.length !== 0) {
+    //sort Nodes by distance from start
+    sortUnvisitedNodes(unvisitedNodes);
 
-        //extract closest unvisited Node from start
-        const curNode = unvisitedNodes.shift()
+    //extract closest unvisited Node from start
+    const curNode = unvisitedNodes.shift();
 
-        //if curNode is the endNode, we can exit early. we know the shortest path to it.
-        if (curNode === endNode){
-            visitedNodes.push(curNode)
-            return visitedNodes
-        }
-
-        //calculate distance to each of its unvisited neighbors
-        unvisitedNeighbors(curNode, grid)
-
-        //done visiting curNode
-        curNode.isVisited = true
-        visitedNodes.push(curNode)
+    //if curNode is the endNode, we can exit early. we know the shortest path to it.
+    if (curNode === endNode) {
+      visitedNodes.push(curNode);
+      return visitedNodes;
     }
-    
+
+    //calculate distance to each of its unvisited neighbors
+    unvisitedNeighbors(curNode, grid);
+
+    //done visiting curNode
+    curNode.isVisited = true;
+    visitedNodes.push(curNode);
+  }
 }
 
 //identify unvisited neighbors of current Node and then update their distance if shorter one found
-function unvisitedNeighbors(curNode, grid){
-    const neighbors = []
+function unvisitedNeighbors(curNode, grid) {
+  const neighbors = [];
 
-    const row = curNode.row
-    const col = curNode.col
+  const row = curNode.row;
+  const col = curNode.col;
 
-    //get neighbors in all 4 directions
-    if (row > 0) neighbors.push(grid[row-1][col])
-    if (col > 0) neighbors.push(grid[row][col-1])
-    if (row < grid.length-1) neighbors.push(grid[row+1][col])
-    if (col < grid[row].length-1) neighbors.push(grid[row][col+1])
+  //get neighbors in all 4 directions
+  if (row > 0) neighbors.push(grid[row - 1][col]);
+  if (col > 0) neighbors.push(grid[row][col - 1]);
+  if (row < grid.length - 1) neighbors.push(grid[row + 1][col]);
+  if (col < grid[row].length - 1) neighbors.push(grid[row][col + 1]);
 
-    //filter to keep only unvisited neighbors
-    neighbors.filter(node => !node.isVisited)
+  //filter to keep only unvisited neighbors
+  neighbors.filter((node) => !node.isVisited);
 
-    //update their distances
-    for (const neighbor of neighbors){
-        if (neighbor.distance > curNode.distance + 1){
-            neighbor.distance = curNode.distance + 1
-            neighbor.prevNode = curNode //update neighbor's prevNode if better distance is found
-        }
+  //update their distances
+  for (const neighbor of neighbors) {
+    if (neighbor.distance > curNode.distance + 1) {
+      neighbor.distance = curNode.distance + 1;
+      neighbor.prevNode = curNode; //update neighbor's prevNode if better distance is found
     }
+  }
 }
 
 //sort Nodes by distance (non-decreasing)
-function sortUnvisitedNodes(unvisitedNodes){
-    unvisitedNodes.sort((node1, node2) => (node1.distance - node2.distance))
+function sortUnvisitedNodes(unvisitedNodes) {
+  unvisitedNodes.sort((node1, node2) => node1.distance - node2.distance);
 }
 
 //all Nodes in grid are unvisited prior to starting Dijkstra
-function getUnvisitedNodes(grid){
-    const unvisitedNodes = [];
+function getUnvisitedNodes(grid) {
+  const unvisitedNodes = [];
 
-    for (let i = 0; i < grid.length; i++){
-        for (let j = 0; j < grid[i].length; j++){
-            unvisitedNodes.push(grid[i][j])
-        }
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      unvisitedNodes.push(grid[i][j]);
     }
-    return unvisitedNodes
+  }
+  return unvisitedNodes;
 }
 
-export function shortestPath(endNode){
-    const path = [];
+export function shortestPath(endNode) {
+  const path = [];
 
-    let curNode = endNode;
+  let curNode = endNode;
 
-    while (curNode !== null){
-        path.unshift(curNode) //unshift pushes to front of array, so our path will be in order
-        curNode = curNode.prevNode
-    }
+  while (curNode !== null) {
+    curNode.inShortestPath = true; //mark Node as being in shortest path
+    path.unshift(curNode); //unshift pushes to front of array, so our path will be in order
+    curNode = curNode.prevNode;
+  }
 
-    return path;
+  return path;
 }

@@ -1,9 +1,9 @@
 .node {
-    width: 25px;
-    height: 25px;
-    outline: 1px solid rgb(121, 167, 200);
-    /* display: inline-block; */
-  }
+  width: 25px;
+  height: 25px;
+  outline: 1px solid rgb(121, 167, 200);
+  /* display: inline-block; */
+}
 
 .startPoint {
   background-color: lightgreen;
@@ -11,4 +11,16 @@
 
 .endPoint {
   background-color: firebrick;
+}
+
+.visited {
+  background-color: lightblue;
+}
+
+.shortest {
+  background-color: pink;
+}
+
+.special {
+  background-color: gold;
 }
