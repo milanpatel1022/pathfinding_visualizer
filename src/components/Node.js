@@ -7,7 +7,6 @@ class Node extends Component {
 
     //give start and end node a class name so we can style them accordingly.
     const nodeClass = isStart ? 'startPoint' : isEnd ? 'endPoint' : '';
-    console.log(nodeClass)
 
     return (
       //each node has two classes. node class & an extra one to identify if it is a startPoint, endPoint or neither
