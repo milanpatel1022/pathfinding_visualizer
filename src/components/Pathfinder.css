@@ -8,6 +8,6 @@ table {
   border-collapse: collapse; /*removes space between each cell so it looks like an actual grid */
 }
 
-.visualizer {
+.visualizeButton {
   margin: 60px 0 0;
 }

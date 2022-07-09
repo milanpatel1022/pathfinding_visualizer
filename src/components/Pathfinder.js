@@ -18,6 +18,7 @@ class Pathfinder extends Component {
     this.state = {
       grid: [], //our 2d array of Objects -> [[{row: 0, ..., isVisited: false}]
       nodeToDrag: "", //let's us know if we are dragging a start or end node
+      visualizing: false, //if True, we should prevent user from doing certain things
     };
   }
 
@@ -60,6 +61,11 @@ class Pathfinder extends Component {
   };
 
   visualizeAlgorithm() {
+    //don't restart if already visualizing
+    if (this.state.visualizing === true) {
+      return;
+    }
+    this.setState({ visualizing: true });
     const grid = this.deepCopyGrid();
 
     const startNode = grid[START_ROW][START_COL];
@@ -95,6 +101,8 @@ class Pathfinder extends Component {
       this.setState({ grid: grid });
       await delay(10);
     }
+
+    this.setState({ visualizing: false });
     return;
   };
 
@@ -112,6 +120,10 @@ class Pathfinder extends Component {
 
   //when mouse is pressed down on start or end node, allow it to be moved to elsewhere
   mouseDown(event, row, col) {
+    //can't move start/end node when visualization in progress
+    if (this.state.visualizing === true) {
+      return;
+    }
     event.preventDefault(); //causes some weird behavior if not included
 
     //need deep copy since we will update and set state
@@ -135,6 +147,11 @@ class Pathfinder extends Component {
 
   //move whatever node we were dragging to cell when mouseup
   mouseUp(event, row, col) {
+    //can't move start/end node when visualization in progress
+    if (this.state.visualizing === true) {
+      return;
+    }
+
     event.preventDefault(); //causes some weird behavior if not included
 
     const grid = this.deepCopyGrid();
@@ -152,6 +169,22 @@ class Pathfinder extends Component {
     this.setState({ grid: grid, nodeToDrag: "" });
   }
 
+  //resets Grid and rest of state to default conditions
+  clearGrid() {
+    //can't reset grid while visualization running
+    if (this.state.visualizing === true) {
+      return;
+    }
+
+    START_ROW = 3;
+    START_COL = 3;
+    END_ROW = 12;
+    END_COL = 25;
+
+    const grid = this.createGrid();
+    this.setState({ grid: grid, nodeToDrag: "" });
+  }
+
   render() {
     //get the current state of our 2d array of objects
     const grid = this.state.grid;
@@ -160,10 +193,13 @@ class Pathfinder extends Component {
     return (
       <>
         <button
-          className="visualizer"
+          className="visualizeButton"
           onClick={() => this.visualizeAlgorithm()}
         >
           Visualize Dijkstra
+        </button>
+        <button className="clearButton" onClick={() => this.clearGrid()}>
+          Reset
         </button>
         <div className="grid">
           <table>
