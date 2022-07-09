@@ -3,7 +3,16 @@ import "./Node.css";
 
 class Node extends Component {
   render() {
-    const { row, col, isStart, isEnd, isVisited, inShortestPath } = this.props;
+    const {
+      row,
+      col,
+      isStart,
+      isEnd,
+      isVisited,
+      inShortestPath,
+      onMouseDown,
+      onMouseUp,
+    } = this.props;
 
     //give start and end node a class name so we can style them accordingly.
     const nodeClass = isStart
@@ -20,7 +29,11 @@ class Node extends Component {
 
     return (
       //each node has two classes. node class & an extra one to identify if it is a startPoint, endPoint or neither
-      <div className={`node ${nodeClass}`}></div>
+      <div
+        className={`node ${nodeClass}`}
+        onMouseDown={(event) => onMouseDown(event, row, col)}
+        onMouseUp={(event) => onMouseUp(event, row, col)}
+      ></div>
     );
   }
 }

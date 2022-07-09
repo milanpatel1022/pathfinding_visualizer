@@ -4,19 +4,20 @@ import { dijkstra, shortestPath } from "../algorithms/dijkstra";
 
 import "./Pathfinder.css";
 
-const rows = 25;
-const cols = 40;
+const rows = 15;
+const cols = 30;
 
-const START_ROW = 15;
-const START_COL = 20;
-const END_ROW = 19;
-const END_COL = 27;
+let START_ROW = 3;
+let START_COL = 3;
+let END_ROW = 12;
+let END_COL = 25;
 
 class Pathfinder extends Component {
   constructor() {
     super();
     this.state = {
       grid: [], //our 2d array of Objects -> [[{row: 0, ..., isVisited: false}]
+      nodeToDrag: "", //let's us know if we are dragging a start or end node
     };
   }
 
@@ -64,13 +65,13 @@ class Pathfinder extends Component {
     const startNode = grid[START_ROW][START_COL];
     const endNode = grid[END_ROW][END_COL];
 
-    //all the Nodes used in Dijkstra
+    //all the Nodes visited in Dijkstra
     const visitedNodes = dijkstra(grid, startNode, endNode);
 
-    //Nodes in the shortest path for Dijkstra
+    //Nodes only in the shortest path for Dijkstra
     const nodesInShortestPath = shortestPath(endNode);
 
-    //animate all these Nodes
+    //animate all these Nodes involved in Dijkstra
     this.animateAlgorithm(visitedNodes, nodesInShortestPath);
   }
 
@@ -79,6 +80,7 @@ class Pathfinder extends Component {
     const delay = (ms) =>
       new Promise((resolve, reject) => setTimeout(resolve, ms));
 
+    //animate the visited Nodes first
     for (let node of visitedNodes) {
       const grid = this.deepCopyGrid();
       grid[node.row][node.col] = node;
@@ -86,7 +88,7 @@ class Pathfinder extends Component {
       await delay(10);
     }
 
-    console.log(nodesInShortestPath);
+    //then, let's animate the shortest path
     for (let node of nodesInShortestPath) {
       const grid = this.deepCopyGrid();
       grid[node.row][node.col] = { ...node, inShortestPath: true };
@@ -106,6 +108,48 @@ class Pathfinder extends Component {
       grid.push(curRow);
     }
     return grid;
+  }
+
+  //when mouse is pressed down on start or end node, allow it to be moved to elsewhere
+  mouseDown(event, row, col) {
+    event.preventDefault(); //causes some weird behavior if not included
+
+    //need deep copy since we will update and set state
+    const grid = this.deepCopyGrid();
+    const node = grid[row][col];
+
+    //dragging start node
+    if (node.isStart === true) {
+      node.isStart = false;
+      this.setState({ grid: grid, nodeToDrag: "start" });
+    }
+
+    //dragging end node
+    else if (node.isEnd === true) {
+      node.isEnd = false;
+      this.setState({ grid: grid, nodeToDrag: "end" });
+    } else {
+      return;
+    }
+  }
+
+  //move whatever node we were dragging to cell when mouseup
+  mouseUp(event, row, col) {
+    event.preventDefault(); //causes some weird behavior if not included
+
+    const grid = this.deepCopyGrid();
+
+    //update state and global variables accordingly
+    if (this.state.nodeToDrag === "start") {
+      grid[row][col].isStart = true;
+      START_ROW = row;
+      START_COL = col;
+    } else if (this.state.nodeToDrag === "end") {
+      grid[row][col].isEnd = true;
+      END_ROW = row;
+      END_COL = col;
+    }
+    this.setState({ grid: grid, nodeToDrag: "" });
   }
 
   render() {
@@ -131,12 +175,18 @@ class Pathfinder extends Component {
                       return (
                         <td key={nodeIdx}>
                           <Node
-                            row={row}
+                            row={rowIdx}
                             col={nodeIdx}
                             isStart={node.isStart}
                             isEnd={node.isEnd}
                             isVisited={node.isVisited}
                             inShortestPath={node.inShortestPath}
+                            onMouseDown={(event, row, col) =>
+                              this.mouseDown(event, row, col)
+                            }
+                            onMouseUp={(event, row, col) =>
+                              this.mouseUp(event, row, col)
+                            }
                           />
                         </td>
                       );
