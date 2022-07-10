@@ -8,6 +8,7 @@ class Node extends Component {
       col,
       isStart,
       isEnd,
+      isWall,
       isVisited,
       inShortestPath,
       onMouseDown,
@@ -26,6 +27,8 @@ class Node extends Component {
         ? "startPoint"
         : isEnd
         ? "endPoint"
+        : isWall
+        ? "wall"
         : isVisited
         ? "visited"
         : "";

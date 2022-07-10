@@ -28,19 +28,29 @@ export function dijkstra(grid, startNode, endNode) {
     //extract closest unvisited Node from start
     const curNode = unvisitedNodes.shift();
 
+    //Walls can make it so that we have no neighbors we can get to (a.k.a. they have distance of Infinity)
+    if (curNode.distance === Infinity) {
+      return [visitedNodes, false];
+    }
+
+    //mark Node as being visited
+    curNode.isVisited = true;
+    visitedNodes.push(curNode);
+
+    //if curNode is a wall, we can ignore it and go to next iteration of while loop
+    if (curNode.isWall === true) {
+      continue;
+    }
+
     //if curNode is the endNode, we can exit early. we know the shortest path to it.
     if (curNode === endNode) {
       curNode.isVisited = true;
       visitedNodes.push(curNode);
-      return visitedNodes;
+      return [visitedNodes, true];
     }
 
     //calculate distance to each of its unvisited neighbors
     unvisitedNeighbors(curNode, grid);
-
-    //done visiting curNode
-    curNode.isVisited = true;
-    visitedNodes.push(curNode);
   }
 }
 

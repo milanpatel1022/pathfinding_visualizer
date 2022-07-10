@@ -58,6 +58,7 @@ class Pathfinder extends Component {
       isVisited: false, //visited Nodes will be styled
       inShortestPath: false, //for Dijkstra
       prevNode: null, //need to know for Dijkstra to identify shortest path
+      isWall: false,
     };
   };
 
@@ -73,17 +74,26 @@ class Pathfinder extends Component {
     const endNode = grid[END_ROW][END_COL];
 
     //all the Nodes visited in Dijkstra
-    const visitedNodes = dijkstra(grid, startNode, endNode);
+    const [visitedNodes, endReachable] = dijkstra(grid, startNode, endNode);
 
-    //Nodes only in the shortest path for Dijkstra
-    const nodesInShortestPath = shortestPath(endNode);
+    //If the end node is able to be reached, then let's determine the shortest path
+    if (endReachable) {
+      //Nodes only in the shortest path for Dijkstra
+      const nodesInShortestPath = shortestPath(endNode);
 
-    //animate all these Nodes involved in Dijkstra
-    this.animateAlgorithm(visitedNodes, nodesInShortestPath);
+      //animate all these Nodes involved in Dijkstra
+      this.animateAlgorithm(visitedNodes, nodesInShortestPath, endReachable);
+    } else {
+      this.animateAlgorithm(visitedNodes, [], endReachable);
+    }
   }
 
   //simulate animation effect by updating state one cell at a time every couple of milliseconds
-  animateAlgorithm = async (visitedNodes, nodesInShortestPath) => {
+  animateAlgorithm = async (
+    visitedNodes,
+    nodesInShortestPath,
+    endReachable
+  ) => {
     const delay = (ms) =>
       new Promise((resolve, reject) => setTimeout(resolve, ms));
 
@@ -95,12 +105,14 @@ class Pathfinder extends Component {
       await delay(1);
     }
 
-    //then, let's animate the shortest path
-    for (let node of nodesInShortestPath) {
-      const grid = this.deepCopyGrid();
-      grid[node.row][node.col] = { ...node, inShortestPath: true };
-      this.setState({ grid: grid });
-      await delay(1);
+    //then, let's animate the shortest path if there was one
+    if (endReachable) {
+      for (let node of nodesInShortestPath) {
+        const grid = this.deepCopyGrid();
+        grid[node.row][node.col] = { ...node, inShortestPath: true };
+        this.setState({ grid: grid });
+        await delay(1);
+      }
     }
 
     this.setState({ visualizing: false });
@@ -142,7 +154,8 @@ class Pathfinder extends Component {
       node.isEnd = false;
       this.setState({ grid: grid, nodeToDrag: "end", mousePressed: true });
     } else {
-      return;
+      node.isWall = !node.isWall;
+      this.setState({ grid: grid, mousePressed: true });
     }
   }
 
@@ -189,6 +202,8 @@ class Pathfinder extends Component {
       grid[row][col].isStart = true;
     } else if (this.state.nodeToDrag === "end") {
       grid[row][col].isEnd = true;
+    } else {
+      grid[row][col].isWall = !grid[row][col].isWall;
     }
 
     this.setState({ grid: grid });
@@ -255,6 +270,7 @@ class Pathfinder extends Component {
                             col={nodeIdx}
                             isStart={node.isStart}
                             isEnd={node.isEnd}
+                            isWall={node.isWall}
                             isVisited={node.isVisited}
                             inShortestPath={node.inShortestPath}
                             onMouseDown={(event, row, col) =>
