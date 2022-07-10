@@ -15,6 +15,7 @@ class Node extends Component {
       onMouseUp,
       onMouseEnter,
       onMouseOut,
+      onClick,
     } = this.props;
 
     //give start and end node a class name so we can style them accordingly.
@@ -41,6 +42,7 @@ class Node extends Component {
         onMouseUp={(event) => onMouseUp(event, row, col)}
         onMouseEnter={(event) => onMouseEnter(event, row, col)}
         onMouseOut={(event) => onMouseOut(event, row, col)}
+        onClick={(event) => onClick(event, row, col)}
       ></div>
     );
   }

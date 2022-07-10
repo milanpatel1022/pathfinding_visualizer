@@ -19,7 +19,8 @@ class Pathfinder extends Component {
       grid: [], //our 2d array of Objects -> [[{row: 0, ..., isVisited: false}]
       nodeToDrag: "", //let's us know if we are dragging a start or end node
       visualizing: false, //if True, we should prevent user from doing certain things
-      mousePressed: false, //needed for animation when dragging nodes
+      mousePressed: false, //used for toggling walls
+      dragToggled: false, //used for moving start/end nodes
     };
   }
 
@@ -131,92 +132,105 @@ class Pathfinder extends Component {
     return grid;
   }
 
-  //when mouse is pressed down on start or end node, allow it to be moved to elsewhere
-  mouseDown(event, row, col) {
-    //can't move start/end node when visualization in progress
+  //if we click on a start/end node, toggle on/off dragging effects
+  onClick(event, row, col) {
     if (this.state.visualizing === true) {
       return;
     }
-    event.preventDefault(); //causes some weird behavior if not included
 
-    //need deep copy since we will update and set state
+    event.preventDefault();
+
     const grid = this.deepCopyGrid();
     const node = grid[row][col];
 
-    //dragging start node
-    if (node.isStart === true) {
-      node.isStart = false;
-      this.setState({ grid: grid, nodeToDrag: "start", mousePressed: true });
-    }
-
-    //dragging end node
-    else if (node.isEnd === true) {
-      node.isEnd = false;
-      this.setState({ grid: grid, nodeToDrag: "end", mousePressed: true });
+    if (this.state.dragToggled === false) {
+      if (node.isStart) {
+        node.isStart = false;
+        this.setState({ grid: grid, nodeToDrag: "start", dragToggled: true });
+      } else if (node.isEnd) {
+        node.isEnd = false;
+        this.setState({ grid: grid, nodeToDrag: "end", dragToggled: true });
+      } else {
+        return;
+      }
     } else {
+      //update necessary variables to reflect moving start/end node to a new cell
+      if (node.isStart && this.state.nodeToDrag === "start") {
+        this.setState({ nodeToDrag: "", dragToggled: false });
+        START_ROW = row;
+        START_COL = col;
+      } else if (node.isEnd && this.state.nodeToDrag === "end") {
+        this.setState({ nodeToDrag: "", dragToggled: false });
+        END_ROW = row;
+        END_COL = col;
+      }
+    }
+  }
+
+  //while mouse is down, toggle walls
+  mouseDown(event, row, col) {
+    if (this.state.visualizing === true) {
+      return;
+    }
+    event.preventDefault();
+
+    const grid = this.deepCopyGrid();
+    const node = grid[row][col];
+
+    //can only add/remove walls if it is not our start/end point
+    if (!(node.isStart || node.isEnd)) {
       node.isWall = !node.isWall;
       this.setState({ grid: grid, mousePressed: true });
     }
   }
 
-  //move whatever node we were dragging to cell when mouseup
-  mouseUp(event, row, col) {
-    //can't move start/end node when visualization in progress
+  //simply update our mousePressed state to false
+  mouseUp(event) {
     if (this.state.visualizing === true) {
       return;
     }
 
-    event.preventDefault(); //causes some weird behavior if not included
-
-    const grid = this.deepCopyGrid();
-
-    //update state and global variables accordingly
-    if (this.state.nodeToDrag === "start") {
-      grid[row][col].isStart = true;
-      START_ROW = row;
-      START_COL = col;
-    } else if (this.state.nodeToDrag === "end") {
-      grid[row][col].isEnd = true;
-      END_ROW = row;
-      END_COL = col;
-    }
-    this.setState({ grid: grid, nodeToDrag: "", mousePressed: false });
+    event.preventDefault();
+    this.setState({ mousePressed: false });
   }
 
-  /*
-  We care about mouseEnter when dragging start/end nodes. We treat the entered cell as the start/end node.
-  We can then produce this animated effect as we drag it around.
-  */
+  //only does anything if mousePressed or dragToggled
   mouseEnter(event, row, col) {
-    //if algorithm running: ignore
-    //if mouse is not down: ignore b/c we are not dragging anything
-    if (this.state.visualizing === true || this.state.mousePressed === false) {
+    if (this.state.visualizing) {
       return;
     }
 
     event.preventDefault();
     const grid = this.deepCopyGrid();
+    const node = grid[row][col];
 
-    //if we are dragging start/end node, set this cell as the start/end point
-    if (this.state.nodeToDrag === "start") {
-      grid[row][col].isStart = true;
-    } else if (this.state.nodeToDrag === "end") {
-      grid[row][col].isEnd = true;
-    } else {
-      grid[row][col].isWall = !grid[row][col].isWall;
+    //if mousePressed & we enter new cell, toggle wall
+    if (this.state.mousePressed) {
+      node.isWall = !node.isWall;
+      this.setState({ grid: grid });
+      return;
     }
 
-    this.setState({ grid: grid });
+    //if dragToggled & we enter new cell, update it to be new start/end point
+    if (this.state.dragToggled) {
+      if (this.state.nodeToDrag === "start") {
+        node.isStart = true;
+      } else if (this.state.nodeToDrag === "end") {
+        node.isEnd = true;
+      }
+      this.setState({ grid: grid });
+    }
   }
 
+  //only does anything if dragToggled
   mouseOut(event, row, col) {
-    if (this.state.visualizing === true || this.state.mousePressed === false) {
+    if (this.state.visualizing === true || this.state.dragToggled === false) {
       return;
     }
 
     event.preventDefault();
 
-    //when we leave a cell, reset whatever we did on this cell during mouseEnter
+    //update the cells we leave while dragging to be what they were previously
     if (this.state.nodeToDrag === "start") {
       this.state.grid[row][col].isStart = false;
     } else if (this.state.nodeToDrag === "end") {
@@ -237,11 +251,10 @@ class Pathfinder extends Component {
     END_COL = this.state.grid[0].length - 1;
 
     const grid = this.createGrid();
-    this.setState({ grid: grid, nodeToDrag: "" });
+    this.setState({ grid: grid, nodeToDrag: "", mousePressed: false });
   }
 
   render() {
-    //get the current state of our 2d array of objects
     const grid = this.state.grid;
 
     //use HTML table to map each element in our array to a Node component
@@ -284,6 +297,9 @@ class Pathfinder extends Component {
                             }
                             onMouseOut={(event, row, col) =>
                               this.mouseOut(event, row, col)
+                            }
+                            onClick={(event, row, col) =>
+                              this.onClick(event, row, col)
                             }
                           />
                         </td>
