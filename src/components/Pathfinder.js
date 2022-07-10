@@ -92,7 +92,7 @@ class Pathfinder extends Component {
       const grid = this.deepCopyGrid();
       grid[node.row][node.col] = node;
       this.setState({ grid: grid });
-      await delay(10);
+      await delay(1);
     }
 
     //then, let's animate the shortest path
@@ -100,7 +100,7 @@ class Pathfinder extends Component {
       const grid = this.deepCopyGrid();
       grid[node.row][node.col] = { ...node, inShortestPath: true };
       this.setState({ grid: grid });
-      await delay(10);
+      await delay(1);
     }
 
     this.setState({ visualizing: false });
@@ -163,9 +163,6 @@ class Pathfinder extends Component {
       START_ROW = row;
       START_COL = col;
     } else if (this.state.nodeToDrag === "end") {
-      if (grid[row][col].isStart === true) {
-        return;
-      }
       grid[row][col].isEnd = true;
       END_ROW = row;
       END_COL = col;
