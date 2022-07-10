@@ -12,6 +12,8 @@ class Node extends Component {
       inShortestPath,
       onMouseDown,
       onMouseUp,
+      onMouseEnter,
+      onMouseOut,
     } = this.props;
 
     //give start and end node a class name so we can style them accordingly.
@@ -33,6 +35,8 @@ class Node extends Component {
         className={`node ${nodeClass}`}
         onMouseDown={(event) => onMouseDown(event, row, col)}
         onMouseUp={(event) => onMouseUp(event, row, col)}
+        onMouseEnter={(event) => onMouseEnter(event, row, col)}
+        onMouseOut={(event) => onMouseOut(event, row, col)}
       ></div>
     );
   }

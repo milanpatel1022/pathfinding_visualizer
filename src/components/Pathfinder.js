@@ -5,12 +5,12 @@ import { dijkstra, shortestPath } from "../algorithms/dijkstra";
 import "./Pathfinder.css";
 
 const rows = 15;
-const cols = 30;
+const cols = 35;
 
-let START_ROW = 3;
-let START_COL = 3;
-let END_ROW = 12;
-let END_COL = 25;
+let START_ROW = 0;
+let START_COL = 0;
+let END_ROW = 2;
+let END_COL = 3;
 
 class Pathfinder extends Component {
   constructor() {
@@ -19,6 +19,7 @@ class Pathfinder extends Component {
       grid: [], //our 2d array of Objects -> [[{row: 0, ..., isVisited: false}]
       nodeToDrag: "", //let's us know if we are dragging a start or end node
       visualizing: false, //if True, we should prevent user from doing certain things
+      mousePressed: false, //needed for animation when dragging nodes
     };
   }
 
@@ -133,13 +134,13 @@ class Pathfinder extends Component {
     //dragging start node
     if (node.isStart === true) {
       node.isStart = false;
-      this.setState({ grid: grid, nodeToDrag: "start" });
+      this.setState({ grid: grid, nodeToDrag: "start", mousePressed: true });
     }
 
     //dragging end node
     else if (node.isEnd === true) {
       node.isEnd = false;
-      this.setState({ grid: grid, nodeToDrag: "end" });
+      this.setState({ grid: grid, nodeToDrag: "end", mousePressed: true });
     } else {
       return;
     }
@@ -162,11 +163,53 @@ class Pathfinder extends Component {
       START_ROW = row;
       START_COL = col;
     } else if (this.state.nodeToDrag === "end") {
+      if (grid[row][col].isStart === true) {
+        return;
+      }
       grid[row][col].isEnd = true;
       END_ROW = row;
       END_COL = col;
     }
-    this.setState({ grid: grid, nodeToDrag: "" });
+    this.setState({ grid: grid, nodeToDrag: "", mousePressed: false });
+  }
+
+  /*
+  We care about mouseEnter when dragging start/end nodes. We treat the entered cell as the start/end node.
+  We can then produce this animated effect as we drag it around.
+  */
+  mouseEnter(event, row, col) {
+    //if algorithm running: ignore
+    //if mouse is not down: ignore b/c we are not dragging anything
+    if (this.state.visualizing === true || this.state.mousePressed === false) {
+      return;
+    }
+
+    event.preventDefault();
+    const grid = this.deepCopyGrid();
+
+    //if we are dragging start/end node, set this cell as the start/end point
+    if (this.state.nodeToDrag === "start") {
+      grid[row][col].isStart = true;
+    } else if (this.state.nodeToDrag === "end") {
+      grid[row][col].isEnd = true;
+    }
+
+    this.setState({ grid: grid });
+  }
+
+  mouseOut(event, row, col) {
+    if (this.state.visualizing === true || this.state.mousePressed === false) {
+      return;
+    }
+
+    event.preventDefault();
+
+    //when we leave a cell, reset whatever we did on this cell during mouseEnter
+    if (this.state.nodeToDrag === "start") {
+      this.state.grid[row][col].isStart = false;
+    } else if (this.state.nodeToDrag === "end") {
+      this.state.grid[row][col].isEnd = false;
+    }
   }
 
   //resets Grid and rest of state to default conditions
@@ -176,10 +219,10 @@ class Pathfinder extends Component {
       return;
     }
 
-    START_ROW = 3;
-    START_COL = 3;
-    END_ROW = 12;
-    END_COL = 25;
+    START_ROW = 0;
+    START_COL = 0;
+    END_ROW = this.state.grid.length - 1;
+    END_COL = this.state.grid[0].length - 1;
 
     const grid = this.createGrid();
     this.setState({ grid: grid, nodeToDrag: "" });
@@ -222,6 +265,12 @@ class Pathfinder extends Component {
                             }
                             onMouseUp={(event, row, col) =>
                               this.mouseUp(event, row, col)
+                            }
+                            onMouseEnter={(event, row, col) =>
+                              this.mouseEnter(event, row, col)
+                            }
+                            onMouseOut={(event, row, col) =>
+                              this.mouseOut(event, row, col)
                             }
                           />
                         </td>
