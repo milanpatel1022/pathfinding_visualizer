@@ -3,6 +3,7 @@ import Node from "./Node";
 import { dijkstra, shortestPath } from "../algorithms/dijkstra";
 
 import "./Pathfinder.css";
+import Navbar from "./Navbar";
 
 const rows = 15;
 const cols = 35;
@@ -260,6 +261,7 @@ class Pathfinder extends Component {
     //use HTML table to map each element in our array to a Node component
     return (
       <>
+        <Navbar></Navbar>
         <button
           className="visualizeButton"
           onClick={() => this.visualizeAlgorithm()}
