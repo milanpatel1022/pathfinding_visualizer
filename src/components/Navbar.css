@@ -7,13 +7,19 @@
   color: white !important;
 }
 
+.nav-link:hover {
+  color: lightblue !important;
+}
+
 .navbar-nav {
   align-items: center;
   justify-content: center;
+  margin-left: 1%;
+  margin-right: 1%;
 }
 
 /* CSS */
-.button-4 {
+.visualizeButton {
   appearance: none;
   background-color: #fafbfc;
   border: 1px solid rgba(27, 31, 35, 0.15);
@@ -36,44 +42,23 @@
   vertical-align: middle;
   white-space: nowrap;
   word-wrap: break-word;
+  margin-left: 1%;
 }
 
-.button-4:hover {
-  background-color: #f3f4f6;
+.visualizeButton:hover {
+  background-color: lightblue;
   text-decoration: none;
   transition-duration: 0.1s;
 }
 
-.button-4:disabled {
-  background-color: #fafbfc;
-  border-color: rgba(27, 31, 35, 0.15);
-  color: #959da5;
-  cursor: default;
+.toggle {
+  background: none;
+  border: none;
+  color: white;
+  padding-left: 1.5%;
+  padding-right: 1.5%;
 }
 
-.button-4:active {
-  background-color: #edeff2;
-  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
-  transition: none 0s;
-}
-
-.button-4:focus {
-  outline: 1px transparent;
-}
-
-.button-4:before {
-  display: none;
-}
-
-.button-4:-webkit-details-marker {
-  display: none;
-}
-
-.navbarNavDarkDropdown {
-  color: red !important;
-}
-
-.header-item {
-  padding-left: 1%;
-  padding-right: 1%;
+.toggle:hover {
+  color: lightblue;
 }

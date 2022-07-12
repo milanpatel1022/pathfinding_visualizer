@@ -262,15 +262,6 @@ class Pathfinder extends Component {
     return (
       <>
         <Navbar></Navbar>
-        <button
-          className="visualizeButton"
-          onClick={() => this.visualizeAlgorithm()}
-        >
-          Visualize Dijkstra
-        </button>
-        <button className="clearButton" onClick={() => this.clearGrid()}>
-          Reset
-        </button>
         <div className="grid">
           <table>
             <tbody>

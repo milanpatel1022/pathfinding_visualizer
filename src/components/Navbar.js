@@ -7,12 +7,13 @@ class Navbar extends Component {
     this.state = {
       algorithm: "",
       speed: "Fast",
+      toggleWalls: false,
+      toggleWeights: false,
     };
   }
 
   render() {
-    const algo = this.state.algorithm;
-    const speed = this.state.speed;
+    const { algorithm, speed, toggleWalls, toggleWeights } = this.state;
     return (
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -84,7 +85,6 @@ class Navbar extends Component {
                   </ul>
                 </li>
               </ul>
-              <button className="button-4 header-item">Visualize {algo}</button>
               <ul className="navbar-nav header-item">
                 <li className="nav-item dropdown">
                   <a
@@ -131,6 +131,19 @@ class Navbar extends Component {
                   </ul>
                 </li>
               </ul>
+              <button
+                className="toggle"
+                onClick={() => this.setState({ toggleWalls: !toggleWalls })}
+              >
+                Walls
+              </button>
+              <button
+                className="toggle"
+                onClick={() => this.setState({ toggleWeights: !toggleWeights })}
+              >
+                Weights
+              </button>
+              <button className="visualizeButton">Visualize {algorithm}</button>
             </div>
           </div>
         </nav>
