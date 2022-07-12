@@ -10,8 +10,8 @@ const cols = 35;
 
 let START_ROW = 0;
 let START_COL = 0;
-let END_ROW = 2;
-let END_COL = 3;
+let END_ROW = rows - 1;
+let END_COL = cols - 1;
 
 class Pathfinder extends Component {
   constructor() {
@@ -266,6 +266,25 @@ class Pathfinder extends Component {
     this.setState({ grid: grid, nodeToDrag: "", mousePressed: false });
   }
 
+  //if we have finished visualizing, clear only the visited Nodes. Keep any other changes the user made.
+  clearPath() {
+    if (this.state.visualizing === true) {
+      return;
+    }
+
+    console.log("in clear");
+    const grid = this.deepCopyGrid();
+
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[i].length; j++) {
+        grid[i][j].isVisited = false;
+        grid[i][j].inShortestPath = false;
+      }
+    }
+
+    this.setState({ grid: grid });
+  }
+
   render() {
     const grid = this.state.grid;
 
@@ -277,6 +296,7 @@ class Pathfinder extends Component {
             this.visualizeAlgorithm(algorithm, speed)
           }
           resetGrid={() => this.resetGrid()}
+          clearPath={() => this.clearPath()}
         ></Navbar>
         <div className="grid">
           <table>

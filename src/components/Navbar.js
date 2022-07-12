@@ -12,6 +12,7 @@ class Navbar extends Component {
       toggleWeights: false,
       visualizeAlgorithm: this.props.visualizeAlgorithm,
       resetGrid: this.props.resetGrid,
+      clearPath: this.props.clearPath,
     };
 
     console.log(this.state);
@@ -203,6 +204,12 @@ class Navbar extends Component {
                 onClick={() => this.state.resetGrid()}
               >
                 Reset Grid
+              </button>
+              <button
+                className="otherButtons"
+                onClick={() => this.state.clearPath()}
+              >
+                Clear Path
               </button>
             </div>
           </div>
