@@ -18,7 +18,7 @@ class Node extends Component {
       onClick,
     } = this.props;
 
-    //give start and end node a class name so we can style them accordingly.
+    //give certain nodes an extra class name to identify them and style them accordingly.
     const nodeClass =
       inShortestPath && (isStart || isEnd)
         ? "special"

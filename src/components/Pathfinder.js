@@ -64,7 +64,8 @@ class Pathfinder extends Component {
     };
   };
 
-  visualizeAlgorithm() {
+  visualizeAlgorithm(algorithm, speed) {
+    console.log(algorithm);
     //don't restart if already visualizing
     if (this.state.visualizing === true) {
       return;
@@ -76,17 +77,23 @@ class Pathfinder extends Component {
     const endNode = grid[END_ROW][END_COL];
 
     //all the Nodes visited in Dijkstra
-    const [visitedNodes, endReachable] = dijkstra(grid, startNode, endNode);
+    if (algorithm === "Dijkstra") {
+      const [visitedNodes, endReachable] = dijkstra(grid, startNode, endNode);
+      //If the end node is able to be reached, then let's determine the shortest path
+      if (endReachable) {
+        //Nodes only in the shortest path for Dijkstra
+        const nodesInShortestPath = shortestPath(endNode);
 
-    //If the end node is able to be reached, then let's determine the shortest path
-    if (endReachable) {
-      //Nodes only in the shortest path for Dijkstra
-      const nodesInShortestPath = shortestPath(endNode);
-
-      //animate all these Nodes involved in Dijkstra
-      this.animateAlgorithm(visitedNodes, nodesInShortestPath, endReachable);
-    } else {
-      this.animateAlgorithm(visitedNodes, [], endReachable);
+        //animate all these Nodes involved in Dijkstra
+        this.animateAlgorithm(
+          visitedNodes,
+          nodesInShortestPath,
+          endReachable,
+          speed
+        );
+      } else {
+        this.animateAlgorithm(visitedNodes, [], endReachable, speed);
+      }
     }
   }
 
@@ -94,17 +101,21 @@ class Pathfinder extends Component {
   animateAlgorithm = async (
     visitedNodes,
     nodesInShortestPath,
-    endReachable
+    endReachable,
+    speed
   ) => {
     const delay = (ms) =>
       new Promise((resolve, reject) => setTimeout(resolve, ms));
+
+    const delay_amount = speed === "Fast" ? 1 : speed === "Normal" ? 130 : 500;
+    console.log(delay_amount);
 
     //animate the visited Nodes first
     for (let node of visitedNodes) {
       const grid = this.deepCopyGrid();
       grid[node.row][node.col] = node;
       this.setState({ grid: grid });
-      await delay(1);
+      await delay(delay_amount);
     }
 
     //then, let's animate the shortest path if there was one
@@ -113,7 +124,7 @@ class Pathfinder extends Component {
         const grid = this.deepCopyGrid();
         grid[node.row][node.col] = { ...node, inShortestPath: true };
         this.setState({ grid: grid });
-        await delay(1);
+        await delay(delay_amount);
       }
     }
 
@@ -240,7 +251,7 @@ class Pathfinder extends Component {
   }
 
   //resets Grid and rest of state to default conditions
-  clearGrid() {
+  resetGrid() {
     //can't reset grid while visualization running
     if (this.state.visualizing === true) {
       return;
@@ -261,7 +272,12 @@ class Pathfinder extends Component {
     //use HTML table to map each element in our array to a Node component
     return (
       <>
-        <Navbar></Navbar>
+        <Navbar
+          visualizeAlgorithm={(algorithm, speed) =>
+            this.visualizeAlgorithm(algorithm, speed)
+          }
+          resetGrid={() => this.resetGrid()}
+        ></Navbar>
         <div className="grid">
           <table>
             <tbody>

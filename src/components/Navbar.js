@@ -2,18 +2,61 @@ import React, { Component } from "react";
 import "./Navbar.css";
 
 class Navbar extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
     this.state = {
       algorithm: "",
       speed: "Fast",
       toggleWalls: false,
       toggleWeights: false,
+      visualizeAlgorithm: this.props.visualizeAlgorithm,
+      resetGrid: this.props.resetGrid,
     };
+
+    console.log(this.state);
+  }
+
+  wallWeightToggler(wallOrWeight) {
+    console.log("in toggler");
+    if (wallOrWeight === "wall") {
+      this.setState((prevState) => ({
+        toggleWalls: !prevState.toggleWalls,
+        toggleWeights: false,
+      }));
+    } else {
+      this.setState((prevState) => ({
+        toggleWalls: false,
+        toggleWeights: !prevState.toggleWeights,
+      }));
+    }
+  }
+
+  runAlgorithm() {
+    const { algorithm, speed, visualizeAlgorithm } = this.state;
+
+    if (algorithm === "") {
+      return;
+    }
+    visualizeAlgorithm(algorithm, speed);
   }
 
   render() {
     const { algorithm, speed, toggleWalls, toggleWeights } = this.state;
+
+    //style Wall/Weight buttons in navbar if they are selected
+    let wallButtonStyle = {
+      color: toggleWalls ? "lightblue" : "",
+    };
+
+    let weightButtonStyle = {
+      color: toggleWeights ? "lightblue" : "",
+    };
+
+    //Update visualize button to represent what algorithm the user has selected
+    let visualizeButtonText =
+      algorithm === "" ? "Choose an Algorithm" : `Visualize ${algorithm}`;
+
     return (
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -132,18 +175,35 @@ class Navbar extends Component {
                 </li>
               </ul>
               <button
-                className="toggle"
-                onClick={() => this.setState({ toggleWalls: !toggleWalls })}
+                className="otherButtons"
+                style={wallButtonStyle}
+                onClick={() => {
+                  this.wallWeightToggler("wall");
+                }}
               >
                 Walls
               </button>
               <button
-                className="toggle"
-                onClick={() => this.setState({ toggleWeights: !toggleWeights })}
+                className="otherButtons"
+                style={weightButtonStyle}
+                onClick={() => {
+                  this.wallWeightToggler("weight");
+                }}
               >
                 Weights
               </button>
-              <button className="visualizeButton">Visualize {algorithm}</button>
+              <button
+                className="visualizeButton"
+                onClick={() => this.runAlgorithm()}
+              >
+                {visualizeButtonText}
+              </button>
+              <button
+                className="otherButtons"
+                onClick={() => this.state.resetGrid()}
+              >
+                Reset Grid
+              </button>
             </div>
           </div>
         </nav>
