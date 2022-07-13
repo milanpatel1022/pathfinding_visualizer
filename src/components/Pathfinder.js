@@ -5,8 +5,8 @@ import { dijkstra, shortestPath } from "../algorithms/dijkstra";
 import "./Pathfinder.css";
 import Navbar from "./Navbar";
 
-const rows = 3;
-const cols = 4;
+const rows = 15;
+const cols = 30;
 
 let START_ROW = 0;
 let START_COL = 0;
@@ -200,10 +200,11 @@ class Pathfinder extends Component {
 
     //can only add/remove walls/weights in a cell if it is not our start/end point
     if (!(node.isStart || node.isEnd)) {
-      if (wallsToggled) {
-        console.log("toggled wall");
+      if (wallsToggled && !node.isWeight) {
+        //can't place a wall if there is a weight present
         node.isWall = !node.isWall;
-      } else if (weightsToggled) {
+      } else if (weightsToggled && !node.isWall) {
+        //can't place a weight if there is a wall present
         node.isWeight = !node.isWeight;
       }
       this.setState({ grid: grid, mousePressed: true });
@@ -306,6 +307,22 @@ class Pathfinder extends Component {
     this.setState({ grid: grid });
   }
 
+  clearWallsAndWeights() {
+    if (this.state.visualizing === true) {
+      return;
+    }
+
+    const grid = this.deepCopyGrid();
+
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[i].length; j++) {
+        grid[i][j].isWall = false;
+        grid[i][j].isWeight = false;
+      }
+    }
+    this.setState({ grid: grid });
+  }
+
   //Navbar Component calls this function when Wall/Weight are clicked on to toggle State.
   toggleWallsOrWeights(wallsOrWeights) {
     if (wallsOrWeights === "wall") {
@@ -333,6 +350,7 @@ class Pathfinder extends Component {
           }
           resetGrid={() => this.resetGrid()}
           clearPath={() => this.clearPath()}
+          clearWallsAndWeights={() => this.clearWallsAndWeights()}
           toggleWallsOrWeights={(wallsOrWeights) =>
             this.toggleWallsOrWeights(wallsOrWeights)
           }

@@ -23,16 +23,20 @@ class Node extends Component {
     const nodeClass =
       inShortestPath && (isStart || isEnd)
         ? "special"
+        : inShortestPath && isWeight
+        ? "shortest fa-solid fa-weight-hanging"
         : inShortestPath
         ? "shortest"
         : isStart
-        ? "startPoint"
+        ? "fa-solid fa-angle-right fa-xl"
         : isEnd
-        ? "endPoint"
+        ? "fa-solid fa-flag"
         : isWall
-        ? "wall"
+        ? "fa-solid fa-x"
+        : isWeight && isVisited
+        ? "visited fa-solid fa-weight-hanging"
         : isWeight
-        ? "weight"
+        ? "fa-solid fa-weight-hanging"
         : isVisited
         ? "visited"
         : "";

@@ -1,8 +1,10 @@
+@import url("https://css.gg/close.css");
+@import url("https://css.gg/chevron-double-right.css");
+
 .node {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   outline: 1px solid rgb(121, 167, 200);
-  /* display: inline-block; */
 }
 
 .startPoint {
@@ -31,4 +33,22 @@
 
 .weight {
   background-color: darkturquoise;
+}
+
+.fa-angle-right {
+  padding-top: 13px;
+  color: #17b169;
+}
+
+.fa-flag {
+  padding-top: 5px;
+  color: darkred;
+}
+
+.fa-weight-hanging {
+  padding-top: 5px;
+}
+
+.fa-x {
+  padding-top: 5px;
 }

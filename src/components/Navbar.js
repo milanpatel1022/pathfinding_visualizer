@@ -13,6 +13,7 @@ class Navbar extends Component {
       visualizeAlgorithm: this.props.visualizeAlgorithm,
       resetGrid: this.props.resetGrid,
       clearPath: this.props.clearPath,
+      clearWallsAndWeights: this.props.clearWallsAndWeights,
       toggleWallsOrWeights: this.props.toggleWallsOrWeights, //let parent know what we want to place on grid
     };
   }
@@ -211,6 +212,12 @@ class Navbar extends Component {
                 onClick={() => this.state.clearPath()}
               >
                 Clear Path
+              </button>
+              <button
+                className="otherButtons"
+                onClick={() => this.state.clearWallsAndWeights()}
+              >
+                Clear Walls/Weights
               </button>
             </div>
           </div>
