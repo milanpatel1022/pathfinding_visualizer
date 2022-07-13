@@ -9,6 +9,7 @@ class Node extends Component {
       isStart,
       isEnd,
       isWall,
+      isWeight,
       isVisited,
       inShortestPath,
       onMouseDown,
@@ -30,6 +31,8 @@ class Node extends Component {
         ? "endPoint"
         : isWall
         ? "wall"
+        : isWeight
+        ? "weight"
         : isVisited
         ? "visited"
         : "";

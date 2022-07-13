@@ -5,8 +5,8 @@ import { dijkstra, shortestPath } from "../algorithms/dijkstra";
 import "./Pathfinder.css";
 import Navbar from "./Navbar";
 
-const rows = 15;
-const cols = 35;
+const rows = 3;
+const cols = 4;
 
 let START_ROW = 0;
 let START_COL = 0;
@@ -22,6 +22,8 @@ class Pathfinder extends Component {
       visualizing: false, //if True, we should prevent user from doing certain things
       mousePressed: false, //used for toggling walls
       dragToggled: false, //used for moving start/end nodes
+      wallsToggled: false, //let's us know if user has selected walls to place on grid
+      weightsToggled: false, //^ but for weights
     };
   }
 
@@ -61,11 +63,11 @@ class Pathfinder extends Component {
       inShortestPath: false, //for Dijkstra
       prevNode: null, //need to know for Dijkstra to identify shortest path
       isWall: false,
+      isWeight: false,
     };
   };
 
   visualizeAlgorithm(algorithm, speed) {
-    console.log(algorithm);
     //don't restart if already visualizing
     if (this.state.visualizing === true) {
       return;
@@ -108,7 +110,6 @@ class Pathfinder extends Component {
       new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     const delay_amount = speed === "Fast" ? 1 : speed === "Normal" ? 130 : 500;
-    console.log(delay_amount);
 
     //animate the visited Nodes first
     for (let node of visitedNodes) {
@@ -179,19 +180,32 @@ class Pathfinder extends Component {
     }
   }
 
-  //while mouse is down, toggle walls
+  //while mouse is down, place walls/weights if either is toggled
   mouseDown(event, row, col) {
     if (this.state.visualizing === true) {
       return;
     }
+
+    const { wallsToggled, weightsToggled } = this.state;
+
+    //if walls/weights aren't toggled, mouseDown should not do anything
+    if (!(wallsToggled || weightsToggled)) {
+      return;
+    }
+
     event.preventDefault();
 
     const grid = this.deepCopyGrid();
     const node = grid[row][col];
 
-    //can only add/remove walls if it is not our start/end point
+    //can only add/remove walls/weights in a cell if it is not our start/end point
     if (!(node.isStart || node.isEnd)) {
-      node.isWall = !node.isWall;
+      if (wallsToggled) {
+        console.log("toggled wall");
+        node.isWall = !node.isWall;
+      } else if (weightsToggled) {
+        node.isWeight = !node.isWeight;
+      }
       this.setState({ grid: grid, mousePressed: true });
     }
   }
@@ -216,9 +230,15 @@ class Pathfinder extends Component {
     const grid = this.deepCopyGrid();
     const node = grid[row][col];
 
-    //if mousePressed & we enter new cell, toggle wall
+    const { wallsToggled, weightsToggled } = this.state;
+
+    //if mousePressed & we enter new cell, toggle wall/weight
     if (this.state.mousePressed) {
-      node.isWall = !node.isWall;
+      if (wallsToggled) {
+        node.isWall = !node.isWall;
+      } else if (weightsToggled) {
+        node.isWeight = !node.isWeight;
+      }
       this.setState({ grid: grid });
       return;
     }
@@ -272,17 +292,33 @@ class Pathfinder extends Component {
       return;
     }
 
-    console.log("in clear");
     const grid = this.deepCopyGrid();
 
     for (let i = 0; i < grid.length; i++) {
       for (let j = 0; j < grid[i].length; j++) {
         grid[i][j].isVisited = false;
         grid[i][j].inShortestPath = false;
+        grid[i][j].distance = Infinity;
+        grid[i][j].prevNode = null;
       }
     }
 
     this.setState({ grid: grid });
+  }
+
+  //Navbar Component calls this function when Wall/Weight are clicked on to toggle State.
+  toggleWallsOrWeights(wallsOrWeights) {
+    if (wallsOrWeights === "wall") {
+      this.setState((prevState) => ({
+        wallsToggled: !prevState.wallsToggled,
+        weightsToggled: false,
+      }));
+    } else if (wallsOrWeights === "weight") {
+      this.setState((prevState) => ({
+        wallsToggled: false,
+        weightsToggled: !prevState.weightsToggled,
+      }));
+    }
   }
 
   render() {
@@ -297,6 +333,9 @@ class Pathfinder extends Component {
           }
           resetGrid={() => this.resetGrid()}
           clearPath={() => this.clearPath()}
+          toggleWallsOrWeights={(wallsOrWeights) =>
+            this.toggleWallsOrWeights(wallsOrWeights)
+          }
         ></Navbar>
         <div className="grid">
           <table>
@@ -313,6 +352,7 @@ class Pathfinder extends Component {
                             isStart={node.isStart}
                             isEnd={node.isEnd}
                             isWall={node.isWall}
+                            isWeight={node.isWeight}
                             isVisited={node.isVisited}
                             inShortestPath={node.inShortestPath}
                             onMouseDown={(event, row, col) =>

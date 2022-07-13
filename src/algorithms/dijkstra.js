@@ -70,10 +70,15 @@ function unvisitedNeighbors(curNode, grid) {
   //filter to keep only unvisited neighbors
   neighbors.filter((node) => !node.isVisited);
 
-  //update their distances
+  //update distances to neighbors from current node
+  let edgeCost = 1; //default cost of an edge is 1
+  if (curNode.isWeight) {
+    edgeCost = 10;
+  } //if node is a weight, cost of edge is 10
+
   for (const neighbor of neighbors) {
-    if (neighbor.distance > curNode.distance + 1) {
-      neighbor.distance = curNode.distance + 1;
+    if (neighbor.distance > curNode.distance + edgeCost) {
+      neighbor.distance = curNode.distance + edgeCost;
       neighbor.prevNode = curNode; //update neighbor's prevNode if better distance is found
     }
   }

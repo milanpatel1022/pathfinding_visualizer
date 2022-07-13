@@ -8,18 +8,16 @@ class Navbar extends Component {
     this.state = {
       algorithm: "",
       speed: "Fast",
-      toggleWalls: false,
-      toggleWeights: false,
+      toggleWalls: false, //used simply for css in navbar
+      toggleWeights: false, //used simply for css in navbar
       visualizeAlgorithm: this.props.visualizeAlgorithm,
       resetGrid: this.props.resetGrid,
       clearPath: this.props.clearPath,
+      toggleWallsOrWeights: this.props.toggleWallsOrWeights, //let parent know what we want to place on grid
     };
-
-    console.log(this.state);
   }
 
   wallWeightToggler(wallOrWeight) {
-    console.log("in toggler");
     if (wallOrWeight === "wall") {
       this.setState((prevState) => ({
         toggleWalls: !prevState.toggleWalls,
@@ -31,6 +29,9 @@ class Navbar extends Component {
         toggleWeights: !prevState.toggleWeights,
       }));
     }
+
+    //call function in parent component, so that the parent's state can be updated as well
+    this.state.toggleWallsOrWeights(wallOrWeight);
   }
 
   runAlgorithm() {
