@@ -12,6 +12,7 @@ class Node extends Component {
       isWeight,
       isVisited,
       inShortestPath,
+      currentNodeToAnimate,
       onMouseDown,
       onMouseUp,
       onMouseEnter,
@@ -33,10 +34,14 @@ class Node extends Component {
         ? "fa-solid fa-flag"
         : isWall
         ? "fa-solid fa-x"
+        : isWeight && currentNodeToAnimate
+        ? "special"
         : isWeight && isVisited
         ? "visited fa-solid fa-weight-hanging"
         : isWeight
         ? "fa-solid fa-weight-hanging"
+        : currentNodeToAnimate
+        ? "special"
         : isVisited
         ? "visited"
         : "";

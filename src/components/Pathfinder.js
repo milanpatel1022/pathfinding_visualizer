@@ -64,14 +64,16 @@ class Pathfinder extends Component {
       prevNode: null, //need to know for Dijkstra to identify shortest path
       isWall: false,
       isWeight: false,
+      currentNodeToAnimate: false,
     };
   };
 
-  visualizeAlgorithm(algorithm, speed) {
+  async visualizeAlgorithm(algorithm, speed) {
     //don't restart if already visualizing
     if (this.state.visualizing === true) {
       return;
     }
+    await this.clearPath();
     this.setState({ visualizing: true });
     const grid = this.deepCopyGrid();
 
@@ -113,9 +115,10 @@ class Pathfinder extends Component {
 
     //animate the visited Nodes first
     for (let node of visitedNodes) {
+      node.currentNodeToAnimate = true;
       const grid = this.deepCopyGrid();
       grid[node.row][node.col] = node;
-      this.setState({ grid: grid });
+      this.setState({ grid: grid }, () => (node.currentNodeToAnimate = false));
       await delay(delay_amount);
     }
 
@@ -288,11 +291,12 @@ class Pathfinder extends Component {
   }
 
   //if we have finished visualizing, clear only the visited Nodes. Keep any other changes the user made.
-  clearPath() {
+  async clearPath() {
     if (this.state.visualizing === true) {
       return;
     }
 
+    console.log("should be clearing path");
     const grid = this.deepCopyGrid();
 
     for (let i = 0; i < grid.length; i++) {
@@ -373,6 +377,7 @@ class Pathfinder extends Component {
                             isWeight={node.isWeight}
                             isVisited={node.isVisited}
                             inShortestPath={node.inShortestPath}
+                            currentNodeToAnimate={node.currentNodeToAnimate}
                             onMouseDown={(event, row, col) =>
                               this.mouseDown(event, row, col)
                             }

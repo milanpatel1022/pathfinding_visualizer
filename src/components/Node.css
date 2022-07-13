@@ -7,16 +7,8 @@
   outline: 1px solid rgb(121, 167, 200);
 }
 
-.startPoint {
-  background-color: lightgreen;
-}
-
-.endPoint {
-  background-color: firebrick;
-}
-
 .visited {
-  background-color: lightblue;
+  background-color: darkslategray;
 }
 
 .shortest {
@@ -27,28 +19,24 @@
   background-color: gold;
 }
 
-.wall {
-  background-color: darkslategray;
-}
-
-.weight {
-  background-color: darkturquoise;
-}
-
+/*start node*/
 .fa-angle-right {
   padding-top: 13px;
   color: #17b169;
 }
 
+/*end node*/
 .fa-flag {
   padding-top: 5px;
   color: darkred;
 }
 
+/*weight nodes*/
 .fa-weight-hanging {
   padding-top: 5px;
 }
 
+/*wall nodes*/
 .fa-x {
   padding-top: 5px;
 }
