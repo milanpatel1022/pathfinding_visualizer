@@ -82,9 +82,15 @@ class Navbar extends Component {
               <span className="navbar-toggler-icon"></span>
             </button>
             <div
-              className="collapse navbar-collapse"
+              className="collapse navbar-collapse navbarButtons"
               id="navbarNavDarkDropdown"
             >
+              <button
+                className="visualizeButton"
+                onClick={() => this.runAlgorithm()}
+              >
+                {visualizeButtonText}
+              </button>
               <ul className="navbar-nav header-item">
                 <li className="nav-item dropdown">
                   <a
@@ -194,12 +200,6 @@ class Navbar extends Component {
                 }}
               >
                 Weights
-              </button>
-              <button
-                className="visualizeButton"
-                onClick={() => this.runAlgorithm()}
-              >
-                {visualizeButtonText}
               </button>
               <button
                 className="otherButtons"
