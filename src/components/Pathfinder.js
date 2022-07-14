@@ -4,9 +4,10 @@ import { dijkstra, shortestPath } from "../algorithms/dijkstra";
 
 import "./Pathfinder.css";
 import Navbar from "./Navbar";
+import Legend from "./Legend";
 
-const rows = 15;
-const cols = 30;
+const rows = 24;
+const cols = 50;
 
 let START_ROW = 0;
 let START_COL = 0;
@@ -359,6 +360,7 @@ class Pathfinder extends Component {
             this.toggleWallsOrWeights(wallsOrWeights)
           }
         ></Navbar>
+        <Legend />
         <div className="grid">
           <table>
             <tbody>
