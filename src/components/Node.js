@@ -22,8 +22,10 @@ class Node extends Component {
 
     //give certain nodes an extra class name to identify them and style them accordingly.
     const nodeClass =
-      inShortestPath && (isStart || isEnd)
-        ? "special"
+      inShortestPath && isStart
+        ? "special fa-solid fa-angle-right fa-xl"
+        : inShortestPath && isEnd
+        ? "special fa-solid fa-flag"
         : inShortestPath && isWeight
         ? "shortest fa-solid fa-weight-hanging"
         : inShortestPath
