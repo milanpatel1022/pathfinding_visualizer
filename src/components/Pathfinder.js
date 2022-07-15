@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Node from "./Node";
 import { dijkstra, dijkstraShortestPath } from "../algorithms/dijkstra";
 import { bfs, bfsShortestPath } from "../algorithms/bfs";
+import { dfs, dfsPath } from "../algorithms/dfs";
 
 import "./Pathfinder.css";
 import Navbar from "./Navbar";
@@ -83,34 +84,27 @@ class Pathfinder extends Component {
     const endNode = grid[END_ROW][END_COL];
 
     let visitedNodes = [];
-    let nodesInShortestPath = [];
+    let nodesInPath = [];
     let endReachable = false;
 
     //all the Nodes visited in Dijkstra
     if (algorithm === "Dijkstra") {
       [visitedNodes, endReachable] = dijkstra(grid, startNode, endNode);
-      nodesInShortestPath = dijkstraShortestPath(endNode);
+      nodesInPath = dijkstraShortestPath(endNode);
     } else if (algorithm === "BFS") {
       [visitedNodes, endReachable] = bfs(grid, startNode, endNode);
-      nodesInShortestPath = bfsShortestPath(endNode);
+      nodesInPath = bfsShortestPath(endNode);
+    } else if (algorithm === "DFS") {
+      [visitedNodes, endReachable] = dfs(grid, startNode, endNode);
+      nodesInPath = dfsPath(endNode);
     }
 
     //animate all these Nodes involved in Dijkstra
-    this.animateAlgorithm(
-      visitedNodes,
-      nodesInShortestPath,
-      endReachable,
-      speed
-    );
+    this.animateAlgorithm(visitedNodes, nodesInPath, endReachable, speed);
   }
 
   //simulate animation effect by updating state one cell at a time every couple of milliseconds
-  animateAlgorithm = async (
-    visitedNodes,
-    nodesInShortestPath,
-    endReachable,
-    speed
-  ) => {
+  animateAlgorithm = async (visitedNodes, nodesInPath, endReachable, speed) => {
     const delay = (ms) =>
       new Promise((resolve, reject) => setTimeout(resolve, ms));
 
@@ -128,7 +122,7 @@ class Pathfinder extends Component {
 
     //then, let's animate the shortest path if there was one
     if (endReachable) {
-      for (let node of nodesInShortestPath) {
+      for (let node of nodesInPath) {
         const grid = this.deepCopyGrid();
         grid[node.row][node.col] = { ...node, inShortestPath: true };
         this.setState({ grid: grid });

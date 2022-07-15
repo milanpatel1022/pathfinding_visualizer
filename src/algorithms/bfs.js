@@ -22,8 +22,6 @@ export function bfs(grid, startNode, endNode) {
 
     //if curNode is the endNode, we can exit early. we know the shortest path to it.
     if (curNode === endNode) {
-      curNode.isVisited = true;
-      visitedNodes.push(curNode);
       return [visitedNodes, true];
     }
 
@@ -75,9 +73,6 @@ export function bfsShortestPath(endNode) {
   let curNode = endNode;
 
   while (curNode !== null) {
-    // console.log(`${curNode.row} ${curNode.col}`);
-
-    // curNode.inShortestPath = true; //mark Node as being in shortest path
     path.unshift(curNode); //unshift pushes to front of array, so our path will be in order
     curNode = curNode.prevNode;
   }

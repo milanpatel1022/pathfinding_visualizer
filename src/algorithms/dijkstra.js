@@ -44,8 +44,6 @@ export function dijkstra(grid, startNode, endNode) {
 
     //if curNode is the endNode, we can exit early. we know the shortest path to it.
     if (curNode === endNode) {
-      curNode.isVisited = true;
-      visitedNodes.push(curNode);
       return [visitedNodes, true];
     }
 
