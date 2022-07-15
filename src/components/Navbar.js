@@ -192,15 +192,17 @@ class Navbar extends Component {
               >
                 Walls
               </button>
-              <button
-                className="otherButtons"
-                style={weightButtonStyle}
-                onClick={() => {
-                  this.wallWeightToggler("weight");
-                }}
-              >
-                Weights
-              </button>
+              {this.state.algorithm === "Dijkstra" && (
+                <button
+                  className="otherButtons"
+                  style={weightButtonStyle}
+                  onClick={() => {
+                    this.wallWeightToggler("weight");
+                  }}
+                >
+                  Weights
+                </button>
+              )}
               <button
                 className="otherButtons"
                 onClick={() => this.state.resetGrid()}
@@ -217,7 +219,9 @@ class Navbar extends Component {
                 className="otherButtons"
                 onClick={() => this.state.clearWallsAndWeights()}
               >
-                Clear Walls/Weights
+                {this.state.algorithm === "Dijkstra"
+                  ? "Clear Walls/Weights"
+                  : "Clear Walls"}
               </button>
             </div>
           </div>
