@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import Node from "./Node";
-import { dijkstra, shortestPath } from "../algorithms/dijkstra";
+import { dijkstra, dijkstraShortestPath } from "../algorithms/dijkstra";
+import { bfs, bfsShortestPath } from "../algorithms/bfs";
 
 import "./Pathfinder.css";
 import Navbar from "./Navbar";
 import Legend from "./Legend";
 
-const rows = 24;
-const cols = 50;
+const rows = 15;
+const cols = 30;
 
 let START_ROW = 0;
 let START_COL = 0;
@@ -81,25 +82,26 @@ class Pathfinder extends Component {
     const startNode = grid[START_ROW][START_COL];
     const endNode = grid[END_ROW][END_COL];
 
+    let visitedNodes = [];
+    let nodesInShortestPath = [];
+    let endReachable = false;
+
     //all the Nodes visited in Dijkstra
     if (algorithm === "Dijkstra") {
-      const [visitedNodes, endReachable] = dijkstra(grid, startNode, endNode);
-      //If the end node is able to be reached, then let's determine the shortest path
-      if (endReachable) {
-        //Nodes only in the shortest path for Dijkstra
-        const nodesInShortestPath = shortestPath(endNode);
-
-        //animate all these Nodes involved in Dijkstra
-        this.animateAlgorithm(
-          visitedNodes,
-          nodesInShortestPath,
-          endReachable,
-          speed
-        );
-      } else {
-        this.animateAlgorithm(visitedNodes, [], endReachable, speed);
-      }
+      [visitedNodes, endReachable] = dijkstra(grid, startNode, endNode);
+      nodesInShortestPath = dijkstraShortestPath(endNode);
+    } else if (algorithm === "BFS") {
+      [visitedNodes, endReachable] = bfs(grid, startNode, endNode);
+      nodesInShortestPath = bfsShortestPath(endNode);
     }
+
+    //animate all these Nodes involved in Dijkstra
+    this.animateAlgorithm(
+      visitedNodes,
+      nodesInShortestPath,
+      endReachable,
+      speed
+    );
   }
 
   //simulate animation effect by updating state one cell at a time every couple of milliseconds
@@ -113,6 +115,7 @@ class Pathfinder extends Component {
       new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     const delay_amount = speed === "Fast" ? 1 : speed === "Normal" ? 130 : 500;
+    console.log(delay_amount);
 
     //animate the visited Nodes first
     for (let node of visitedNodes) {
@@ -297,7 +300,6 @@ class Pathfinder extends Component {
       return;
     }
 
-    console.log("should be clearing path");
     const grid = this.deepCopyGrid();
 
     for (let i = 0; i < grid.length; i++) {

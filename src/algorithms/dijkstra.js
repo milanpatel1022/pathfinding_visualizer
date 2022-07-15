@@ -101,13 +101,12 @@ function getUnvisitedNodes(grid) {
   return unvisitedNodes;
 }
 
-export function shortestPath(endNode) {
+export function dijkstraShortestPath(endNode) {
   const path = [];
 
   let curNode = endNode;
 
   while (curNode !== null) {
-    // curNode.inShortestPath = true; //mark Node as being in shortest path
     path.unshift(curNode); //unshift pushes to front of array, so our path will be in order
     curNode = curNode.prevNode;
   }
