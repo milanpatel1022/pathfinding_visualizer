@@ -1,3 +1,4 @@
+import { clear } from "@testing-library/user-event/dist/clear";
 import React, { Component } from "react";
 import "./Navbar.css";
 
@@ -14,10 +15,12 @@ class Navbar extends Component {
       resetGrid: this.props.resetGrid,
       clearPath: this.props.clearPath,
       clearWallsAndWeights: this.props.clearWallsAndWeights,
+      clearWeights: this.props.clearWeights,
       toggleWallsOrWeights: this.props.toggleWallsOrWeights, //let parent know what we want to place on grid
     };
   }
 
+  //keep track of if walls or weights are toggled for styling purposes & to inform Pathfinding component (parent)
   wallWeightToggler(wallOrWeight) {
     if (wallOrWeight === "wall") {
       this.setState((prevState) => ({
@@ -42,6 +45,12 @@ class Navbar extends Component {
       return;
     }
     visualizeAlgorithm(algorithm, speed);
+  }
+
+  //if the user selects BFS or DFS, any weights they have placed need to be cleared off the board
+  setBFSorDFS(bfsOrDfs) {
+    this.setState({ algorithm: bfsOrDfs });
+    this.state.clearWeights();
   }
 
   render() {
@@ -118,7 +127,7 @@ class Navbar extends Component {
                     </li>
                     <li>
                       <button
-                        onClick={() => this.setState({ algorithm: "BFS" })}
+                        onClick={() => this.setBFSorDFS("BFS")}
                         className="dropdown-item"
                         type="button"
                       >
@@ -127,7 +136,7 @@ class Navbar extends Component {
                     </li>
                     <li>
                       <button
-                        onClick={() => this.setState({ algorithm: "DFS" })}
+                        onClick={() => this.setBFSorDFS("DFS")}
                         className="dropdown-item"
                         type="button"
                       >

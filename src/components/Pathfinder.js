@@ -324,6 +324,21 @@ class Pathfinder extends Component {
     this.setState({ grid: grid });
   }
 
+  clearWeights() {
+    if (this.state.visualizing === true) {
+      return;
+    }
+
+    const grid = this.deepCopyGrid();
+
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[i].length; j++) {
+        grid[i][j].isWeight = false;
+      }
+    }
+    this.setState({ grid: grid });
+  }
+
   //Navbar Component calls this function when Wall/Weight are clicked on to toggle State.
   toggleWallsOrWeights(wallsOrWeights) {
     if (wallsOrWeights === "wall") {
@@ -352,12 +367,13 @@ class Pathfinder extends Component {
           resetGrid={() => this.resetGrid()}
           clearPath={() => this.clearPath()}
           clearWallsAndWeights={() => this.clearWallsAndWeights()}
+          clearWeights={() => this.clearWeights()}
           toggleWallsOrWeights={(wallsOrWeights) =>
             this.toggleWallsOrWeights(wallsOrWeights)
           }
         ></Navbar>
         <Legend />
-        <div className="grid">
+        <div className="grid table-responsive">
           <table>
             <tbody>
               {grid.map((row, rowIdx) => {
