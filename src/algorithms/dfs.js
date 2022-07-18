@@ -1,3 +1,10 @@
+/*
+DFS is an unweighted algorithm that does not guarantee the shortest path to the end node.
+Use recursion to perform DFS
+  - go as far as possible in one direction before backtracking and going in another direction
+  - base cases: node visited or node is a wall
+*/
+
 export function dfs(grid, startNode, endNode) {
   const visitedNodes = [];
   let reachable = false;

@@ -1,12 +1,21 @@
+/*
+BFS is an unweighted algorithm that guarantees shortest path to end node.
+  - Explore nodes one level at a time
+  - Use a queue to keep track of neighboring nodes not yet explored.
+*/
+
 export function bfs(grid, startNode, endNode) {
   const visitedNodes = [];
 
   //initially, our queue only contains the starting node
   let q = Array(1).fill(startNode);
 
+  //while queue is not empty
   while (q.length !== 0) {
     let curNode = q.shift();
 
+    //although we push only unvisited neighbors into our queue, it can be present in the queue multiple times
+    //so we end up visiting the neighbor, but it is in our queue at a later point.
     if (curNode.isVisited) {
       continue;
     }
@@ -30,10 +39,6 @@ export function bfs(grid, startNode, endNode) {
     for (const neighbor of neighbors) {
       q.push(neighbor);
     }
-    // console.log("q");
-    // for (const item of q) {
-    //   console.log(item.row, item.col, item.isVisited);
-    // }
   }
 
   //if while loop completes and we haven't returned, we were not able to find a path to endNode
