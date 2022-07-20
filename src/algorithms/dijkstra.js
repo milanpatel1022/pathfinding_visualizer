@@ -71,8 +71,8 @@ function unvisitedNeighbors(curNode, grid) {
   //update distances to neighbors from current node
   let edgeCost = 1; //default cost of an edge is 1
   if (curNode.isWeight) {
-    edgeCost = 10;
-  } //if node is a weight, cost of edge is 10
+    edgeCost = 5;
+  } //if node is a weight, cost of edge is 5
 
   for (const neighbor of neighbors) {
     if (neighbor.distance > curNode.distance + edgeCost) {

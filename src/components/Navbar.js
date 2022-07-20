@@ -118,6 +118,17 @@ class Navbar extends Component {
                   >
                     <li>
                       <button
+                        onClick={() =>
+                          this.setState({ algorithm: "A* Search" })
+                        }
+                        className="dropdown-item"
+                        type="button"
+                      >
+                        A* Search
+                      </button>
+                    </li>
+                    <li>
+                      <button
                         onClick={() => this.setState({ algorithm: "Dijkstra" })}
                         className="dropdown-item"
                         type="button"

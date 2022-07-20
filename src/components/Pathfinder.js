@@ -3,13 +3,14 @@ import Node from "./Node";
 import { dijkstra, dijkstraShortestPath } from "../algorithms/dijkstra";
 import { bfs, bfsShortestPath } from "../algorithms/bfs";
 import { dfs, dfsPath } from "../algorithms/dfs";
+import { astar, aStarPath } from "../algorithms/astar";
 
 import "./Pathfinder.css";
 import Navbar from "./Navbar";
 import Legend from "./Legend";
 
-const rows = 15;
-const cols = 30;
+const rows = 10;
+const cols = 20;
 
 let START_ROW = 0;
 let START_COL = 0;
@@ -97,6 +98,9 @@ class Pathfinder extends Component {
     } else if (algorithm === "DFS") {
       [visitedNodes, endReachable] = dfs(grid, startNode, endNode);
       nodesInPath = dfsPath(endNode);
+    } else if (algorithm === "A* Search") {
+      [visitedNodes, endReachable] = astar(grid, startNode, endNode);
+      nodesInPath = aStarPath(endNode);
     }
 
     //animate all these Nodes involved in Dijkstra
