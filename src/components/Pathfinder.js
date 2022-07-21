@@ -9,8 +9,8 @@ import "./Pathfinder.css";
 import Navbar from "./Navbar";
 import Legend from "./Legend";
 
-const rows = 10;
-const cols = 20;
+const rows = 24;
+const cols = 40;
 
 let START_ROW = 0;
 let START_COL = 0;

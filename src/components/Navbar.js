@@ -240,7 +240,8 @@ class Navbar extends Component {
                 className="otherButtons"
                 onClick={() => this.state.clearWallsAndWeights()}
               >
-                {this.state.algorithm === "Dijkstra"
+                {this.state.algorithm === "Dijkstra" ||
+                this.state.algorithm === "A* Search"
                   ? "Clear Walls/Weights"
                   : "Clear Walls"}
               </button>

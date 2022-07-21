@@ -19,7 +19,6 @@
             -> F value of this node is the cost of cheapest path to it
 */
 
-import { start } from "@popperjs/core";
 import Heap from "heap";
 
 //initialize hash table mapping Nodes : {f, g, h}
