@@ -212,7 +212,8 @@ class Navbar extends Component {
               >
                 Walls
               </button>
-              {this.state.algorithm === "Dijkstra" && (
+              {(this.state.algorithm === "Dijkstra" ||
+                this.state.algorithm === "A* Search") && (
                 <button
                   className="otherButtons"
                   style={weightButtonStyle}

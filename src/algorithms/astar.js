@@ -20,7 +20,7 @@
 */
 
 import { start } from "@popperjs/core";
-import Heap from "heap-js";
+import Heap from "heap";
 
 //initialize hash table mapping Nodes : {f, g, h}
 let node_info = new Map();
@@ -29,42 +29,51 @@ export function astar(grid, startNode, endNode) {
   const visitedNodes = [];
   const nodes = getNodes(grid);
 
-  let id = 1;
   for (let node of nodes) {
     let manhattan_distance = calculate_h(node, endNode);
     node_info.set(node, {
-      id: id, //needed for minHeap -> if f values are equal, id's will be compared to sort
       f: Infinity,
       g: Infinity,
       h: manhattan_distance,
     });
-    id = id + 1;
   }
 
   //update f and g values of start node
   let startInfo = node_info.get(startNode);
   node_info.set(startNode, {
-    id: startInfo.id,
     f: startInfo.h,
     g: 0,
     h: startInfo.h,
   });
 
-  //each element in minheap will be of structure: (f, Node). We will extract Nodes with smallest f
-  const minHeap = new Heap();
+  //each element in minheap will be of structure: [f, h, Node]
+  //heap will sort based on f values. If f values are equal, it will sort based on h values.
+  const minHeap = new Heap(function (a, b) {
+    return a[0] - b[0] || a[1] - b[1];
+  });
 
   //initialize heap with start Node
   startInfo = node_info.get(startNode);
-  minHeap.push([startInfo.f, startInfo.id, startNode]);
+  minHeap.push([startInfo.f, startInfo.h, startNode]);
 
-  //algorithm
-  while (minHeap.length !== 0) {
+  //while heap is not empty
+  while (!minHeap.empty()) {
     //extract Node with lowest F(N)
     let cur = minHeap.pop();
     let curNode = cur[2];
 
+    //already expanded from this Node. would not make sense to expand again from here.
+    if (curNode.isVisited) {
+      continue;
+    }
+
     curNode.isVisited = true;
     visitedNodes.push(curNode);
+
+    //if curNode is a wall, ignore it
+    if (curNode.isWall) {
+      continue;
+    }
 
     //if curNode is the end node, we can return early
     if (curNode === endNode) {
@@ -77,7 +86,7 @@ export function astar(grid, startNode, endNode) {
     //add them to the minHeap
     for (let neighbor of neighbors) {
       let neighborInfo = node_info.get(neighbor);
-      minHeap.push([neighborInfo.f, neighborInfo.id, neighbor]);
+      minHeap.push([neighborInfo.f, neighborInfo.h, neighbor]);
     }
   }
 
@@ -104,7 +113,6 @@ function getNeighbors(curNode, grid) {
 
   //cost to get to curNode
   let costToCurNode = node_info.get(curNode).g;
-  console.log(`cost to current node: ${costToCurNode}`);
 
   //will store filtered out neighbors (to whom we've found a cheaper path)
   let filteredNeighbors = [];

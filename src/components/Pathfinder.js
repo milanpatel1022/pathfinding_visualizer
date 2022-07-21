@@ -113,7 +113,6 @@ class Pathfinder extends Component {
       new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     const delay_amount = speed === "Fast" ? 1 : speed === "Normal" ? 130 : 500;
-    console.log(delay_amount);
 
     //animate the visited Nodes first
     for (let node of visitedNodes) {
