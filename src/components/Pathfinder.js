@@ -204,11 +204,11 @@ class Pathfinder extends Component {
 
     //can only add/remove walls/weights in a cell if it is not our start/end point
     if (!(node.isStart || node.isEnd)) {
-      if (wallsToggled && !node.isWeight) {
-        //can't place a wall if there is a weight present
+      if (wallsToggled) {
+        node.isWeight = false;
         node.isWall = !node.isWall;
-      } else if (weightsToggled && !node.isWall) {
-        //can't place a weight if there is a wall present
+      } else if (weightsToggled) {
+        node.isWall = false;
         node.isWeight = !node.isWeight;
       }
       this.setState({ grid: grid, mousePressed: true });
